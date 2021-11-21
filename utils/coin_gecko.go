@@ -31,7 +31,7 @@ type MarketData struct {
 	MarketCapChangeCurrency CurrentPrice `json:"market_cap_change_24h_in_currency"`
 	TotalSupply             float64      `json:"total_supply"`
 	CirculatingSupply       float64      `json:"circulating_supply"`
-	MarketCapRank           float64      `json:"market_cap_rank"`
+	MarketCapRank           int64        `json:"market_cap_rank"`
 }
 
 
@@ -41,7 +41,7 @@ type GeckoPriceResults struct {
 	Symbol        string     `json:"symbol"`
 	Name          string     `json:"name"`
 	MarketData    MarketData `json:"market_data"`
-	MarketCapRank float64    'json:"market_cap_rank"'
+	MarketCapRank int64    'json:"market_cap_rank"'
 }
 
 // GetCryptoPrice retrieves the price of a given ticker using the coin gecko API
@@ -94,7 +94,7 @@ func GetCryptoPriceCache(client *redis.Client, ctx context.Context, ticker strin
 	var currentPrice CurrentPrice
 	var currentMarketCap CurrentPrice
 	var marketData MarketData
-	var marketCapRank float64
+	var marketCapRank int64
 	var geckoPriceResults GeckoPriceResults
 	var symbol string
 	var name string
@@ -120,7 +120,7 @@ func GetCryptoPriceCache(client *redis.Client, ctx context.Context, ticker strin
 	}
 	
 	// get marketCapRank
-	var marketCapRankFloat float64
+	var marketCapRankFloat int64
 	marketCapRank, err := client.Get(ctx, fmt.sprintF("%s#marketCapRank", ticker)).Result()
 	if err == redis.Nil {
 		geckoPriceResults, err = GetCryptoPrice(ticker)
